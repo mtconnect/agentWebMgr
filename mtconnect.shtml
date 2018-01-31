@@ -1,0 +1,202 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--
+	* Copyright (c) 2013-2016 Cisco Systems, Inc.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+		<script language="JavaScript" src="en/re_userpassword.js"></script>
+		<script language="JavaScript" src="en/re_xsetup.js"></script>
+		<link rel="stylesheet" type="text/css" href="xwt/themes/reboot2/reboot2-base.css">
+		<!-- reboot2-xwt.css contains all the required css files for all the xwt widget
+		components (Table, UIShell, Tree and etc.) This css should be exist in the page to
+		make complex xwt widgets to work. -->
+		<link rel="stylesheet" type="text/css" href="xwt/themes/reboot2/reboot2-xwt.css">
+		<!-- reboot2-explorer.css contains application specific css files and this will
+		vary from applicaiton to application and hence it is not requried for other applications.
+		-->
+		<link rel="stylesheet" type="text/css" href="xwt/themes/reboot2/reboot2-explorer.css">
+		<style type="text/css">
+			.cippara {
+				padding-left: 6px;
+				width: auto;
+			}
+
+			.cipvalue {
+				width: 30%;
+			}
+			
+			.myTable {
+				position: fixed;
+				width: 600px !important;
+				height: 180px;
+			}
+
+			.myButton {
+				visibility: hidden;
+			}
+
+		</style>
+		<script type="text/javascript">
+			djConfig = {
+				locale: "en-us",
+				isDebug: false,
+				debugAtAllCosts: false,
+				parseOnLoad: true,
+				baseUrl: "dojo/",
+				modulePaths: {
+					"xwt": "../xwt"
+				}
+			};
+		</script>
+		<script type="text/javascript" src="dojo/dojo.js">
+		</script>
+		<script type="text/javascript" src="xwt/xwt.js"></script>
+		<script type="text/javascript" src="scripts/sitewide.js">
+		</script>
+		<script type="text/javascript" src="scripts/forms.js"></script>
+		<script type="text/javascript" src="scripts/mtconnect.js"></script>
+		<script type="text/javascript">
+			dojo.require("dojo.parser");
+			dojo.require("dijit.form.TextBox");
+			dojo.require("dijit.form.SimpleTextarea");
+			dojo.require("dijit.layout.ContentPane");
+			dojo.require("dojo.data.ItemFileReadStore");
+			dojo.require("dojo.data.ItemFileWriteStore");
+			dojo.require("xwt.widget.table.Table");
+			dojo.require("xwt.widget.table.Toolbar");
+			dojo.require("xwt.widget.dijit");
+			dojo.require("xwt.widget.notification.Alert");
+			dojo.require("xwt.widget.layout.Dialog");
+			dojo.require("xwt.widget.form.UnifiedIPAddress");
+			dojo.require("dijit.form.RadioButton");
+			dojo.require("xwt.widget.form.PasswordTextBox");
+		</script>
+		<script type="text/javascript">			
+			
+			
+		</script>
+	</head>
+<body class="reboot2" style="margin: 5px;">
+	
+	<form name="mtconnectForm" method="POST" onSubmit="return false;">
+		<textarea style="display: none; visibility: hidden;"
+			name="IOX_IP_INT_DETAIL"><!--#exec cmd='show running-config | i host ip address'-->
+		</textarea>
+	</form>
+	
+<div dojoType="xwt.widget.layout.XwtTabContainer" class="tabdialog" style="left: 6px; right: 6px; width: 100%; height: 800px;overflow :hidden;">
+	<div id="mtconnectDataPane" dojoType="xwt.widget.layout.XwtContentPane" title="Agent/Adapter Status & Control" style="width: 100%; height: 780px;overflow :hidden;">
+	<div id="centerRegion" region="center" style="background: transparent; overflow: hidden; border-bottom: 1px solid #FFFFFF; height: 320px; width:96%;">
+		<div class="contentarea" style="margin-top: 10px; padding-left: 4px; width:100%; height:320px;">
+				<div id="global4" dojoType="xwt.widget.table.GlobalToolbar" title="MTConnect Manager" tableId="agentTable" displayTotalRecords="true" showButtons="settings" disableFixedRowsMenu="true" ></div>
+				<div id="context2" dojoType="xwt.widget.table.ContextualToolbar" tableId="agentTable" quickFilter=false>
+					 <div dojoType="dijit.form.Button" id="startButton" iconClass="xwtContextualIcon xwtContextualAddRow" showLabel="true" onclick="startButton()">Start</div>
+					 <div dojoType="dijit.form.Button" id="stopButton" iconClass="xwtContextualIcon xwtContextualDelete" showLabel="true" onclick="stopButton()">Stop</div>
+					 <div dojoType="dijit.form.Button" id="importButton" iconClass="xwtContextualIcon xwtContextualEdit" showLabel="true" onclick="importButton()">Import File</div>
+					 <div dojoType="dijit.form.Button" id="exportButton" iconClass="xwtContextualIcon xwtContextualEdit" showLabel="true" onclick="exportButton()">Export File</div>
+					 <div dojoType="dijit.form.Button" id="agentLogButton" iconClass="xwtContextualIcon xwtContextualAddRow" showLabel="true" onclick="agentLogButton()">View Agent Log</div>
+					 <div dojoType="dijit.form.Button" id="adapterViewButton" iconClass="xwtContextualIcon xwtContextualAddRow" showLabel="true" onclick="adapterViewButton()">View Adapter</div>
+				</div>
+				<div id="agentTable" jsid="agentTable" dojoType="xwt.widget.table.Table" store="agentDataStore" query="''" selectMultiple="true" selectAllOption="true" defaultItem=""
+				selectModel="input" structure="agentLayout" style="width:95%; height:300px !important; overflow: hidden; position:fixed;"></div>
+		</div>
+		
+		<div id="importFileDialog" dojoType="xwt.widget.layout.Dialog" title="" style="visiblity:hidden;display:none">
+			<form type='dijit.form.Form' id="cn_fileMgmt_form" name='upload' method='post' enctype='multipart/form-data'>
+	    	<label for='dir' style='padding-right:8px;'>Directory :</label>
+	        <input dojoType='dijit.form.TextBox' type='text' name='dir' id='dir' value='' maxlength=40 style='margin-bottom:5px;width:200px;'> <br>
+	        <label for='file'>File to upload: </label>
+	        <input type='file' name='myFile' id='myFile' />
+	    	</form>
+	    </div>
+	    
+	    <div id="exportFileDialog" dojoType="xwt.widget.layout.Dialog" title="" style="visiblity:hidden;display:none">
+	    	<label for='dirEx' style='padding-right:8px;'>Directory :</label>
+	        <input dojoType='dijit.form.TextBox' type='text' name='dirEx' id='dirEx' readonly="readonly" maxlength=40 style='margin-bottom:5px;width:200px;'> <br>
+			<label for='fileList' style='padding-right:8px;'>File Name:</label>
+	        <input dojoType='dijit.form.Select' id='fileList' style='width:200px;'> <br>
+	    </div>
+	
+		<div id="agentLogDialog" dojoType="xwt.widget.layout.Dialog" title="" style="visiblity:hidden;display:none">
+			<br>
+			<table cellspacing='0'>
+	        <tr>
+			<td>
+			<div id="agentLogDetail" dojoType="dijit.form.SimpleTextarea" style="height: 350px; width: 800px;"></div>
+			</td>
+			</tr>
+			</table>									
+		</div>			
+	</div>
+	<div id="centerRegion1" region="center" style="background: transparent; overflow: hidden; border-bottom: 1px solid #FFFFFF; height: 250px; width:96%;">
+		<div id="adapterDetails" class="contentarea" style="margin-top: 5px; padding-left: 4px; width:100%; height:250px;">
+				<div id="global5" dojoType="xwt.widget.table.GlobalToolbar" title="Adapter Table" tableId="adapterTable" displayTotalRecords="true" showButtons="settings" disableFixedRowsMenu="true" ></div>
+				<div id="context3" dojoType="xwt.widget.table.ContextualToolbar" tableId="adapterTable" quickFilter=false>
+					 <div dojoType="dijit.form.Button" class="myButton" id="adapterLogButton" iconClass="xwtContextualIcon xwtContextualAddRow" showLabel="true" onclick="adapterLogButton()">View Adapter Log</div>
+				</div> 
+				<div id="adapterTable" jsid="adapterTable" dojoType="xwt.widget.table.Table" store="adapterDataStore" query="''" structure="adapterLayout" style="width:95%; height:210px !important; overflow: hidden; position:fixed;"></div>
+		</div>
+		
+		<div id="adapterLogDialog" dojoType="xwt.widget.layout.Dialog" title="" style="visiblity:hidden;display:none">
+			<br>
+			<table cellspacing='0'>
+	        <tr>
+			<td>
+			<div id="adapterLogDetail" dojoType="dijit.form.SimpleTextarea" style="height: 350px; width: 800px;"></div>
+			</td>
+			</tr>
+			</table>									
+		</div>
+	</div>
+	</div>
+	
+	<div id="sbPane" dojoType="xwt.widget.layout.XwtContentPane" title="Southbound Network Settings" style="width: 100%; height: 780px;overflow :hidden;">
+		<div id="centerRegion" region="center" style="background: transparent; overflow: hidden; border-bottom: 1px solid #FFFFFF; height: 350px; width:100%;">
+		<br>
+		<table border="0" cellspacing="0" cellpadding="0" style="margin:5px;">
+			<tr> 
+				<td style="font-weight:bold;">SouthBound Network Settings</td>
+			</tr>
+			<br>
+			<tr>
+				<td style='height:28px;width:200px;'>Description:</td>
+				<td><input dojoType='dijit.form.TextBox' disabled="disabled" type='text' name='southBound_Desc' id='southBound_Desc' value="SouthBound" style='width:100px;'></td>
+			</tr>
+			<tr>
+				<td style='height:28px;width:200px;'>IP Address:</td>
+				<td><div id="text_IpAddress_SouthBound" dojoType="xwt.widget.form.UnifiedIPAddress" i18nPackageName="xwt" i18nBundleName="XMPProperties" iPv4Only='true'></div></td>
+			</tr>
+			<!-- <tr>
+				<td style='height:28px;width:200px;'> Vlan ID:</td>
+				<td><input id="list_southBound_VLANID" dojoType="dijit.form.NumberTextBox" style="width:30px" constraints="{min:1,max:4096}">
+                </td>
+			</tr> -->
+			<tr>
+				<td style='height:28px;width:200px;'>VLAN ID:</td>
+				<td><input dojoType='dijit.form.TextBox' disabled="disabled" type='text' name='vlan_id' id='vlan_id' value="500" style='width:50px;'></td>
+			</tr>
+		</table>
+		<button id="sbSubmit" dojoType="xwt.widget.form.TextButton">Submit</button>	
+	</div>
+	</div>
+	</div>
+	<div dojoType="xwt.widget.notification.Toaster" duration="30000" maxCharacters="6000" id="toast"></div>
+</body>
+
+</html>
+
+
